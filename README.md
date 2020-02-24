@@ -1,4 +1,4 @@
-# Case for Bus Pirate v4 (and v3.6)
+# 3D Letter
 This is a SCAD Model for 3D letters.
 <br>
 
