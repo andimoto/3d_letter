@@ -1,19 +1,25 @@
 /* by andimoto */
+use <fonts/HussarBd.otf>
+use <fonts/HussarBdObl.otf>
+use <fonts/Millimetre-Bold.otf>
+
 printlayer=0.45; //mm
 letterHight=printlayer*130;
 thickness=printlayer*28;
 font="DejaVu Sans Mono:style=Bold";
+fontHussarBolt="Hussar:style=Fett";
+fontMillimetre="Millimetre:style=Bold";
 
 echo("Font hight=",letterHight);
 echo("Thickness=",thickness);
 
 module 3d_letter(letter, hight, thickness) {
-    linear_extrude(thickness) text(letter,size=hight,font=font,$fn = 50);
+    linear_extrude(thickness) text(letter,size=hight,font=fontMillimetre,$fn = 100);
 }
 
 module ledPlate(){
     cube([(10/2)-printlayer,4,10+1]);
-    translate([(10/2),0,0]) cube([(10/2)-printlayer,4,10+1]);
+    translate([(10/2)+printlayer,0,0]) cube([(10/2)-printlayer,4,10+1]);
 }
 
 
@@ -32,4 +38,4 @@ for(i = [0:AlphCnt-1]){
 }
 
 
-/* alphabet(); */
+alphabet();
