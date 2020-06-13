@@ -38,4 +38,4 @@ for(i = [0:AlphCnt-1]){
 }
 
 
-alphabet();
+/* alphabet(); */
