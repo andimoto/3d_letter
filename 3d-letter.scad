@@ -3,9 +3,9 @@ use <fonts/HussarBd.otf>
 use <fonts/HussarBdObl.otf>
 use <fonts/Millimetre-Bold.otf>
 
-printlayer=0.45; //mm
-letterHight=printlayer*130;
-thickness=printlayer*28;
+printlayer=0.5; //mm
+letterHight=printlayer*120;
+thickness=printlayer*26;
 font="DejaVu Sans Mono:style=Bold";
 fontHussarBolt="Hussar:style=Fett";
 fontMillimetre="Millimetre:style=Bold";
@@ -18,8 +18,8 @@ module 3d_letter(letter, hight, thickness) {
 }
 
 module ledPlate(){
-    cube([(10/2)-printlayer,4,10+1]);
-    translate([(10/2)+printlayer,0,0]) cube([(10/2)-printlayer,4,10+1]);
+    cube([(11)-printlayer,4,10+1]);
+
 }
 
 
@@ -36,6 +36,10 @@ for(i = [0:AlphCnt-1]){
     3d_letter(Alphabet[i],letterHight,thickness);
 };
 }
-
-
+difference() {
+  3d_letter("A",letterHight,thickness);
+  #translate([5.2,1,0]) ledPlate();
+  #translate([34.3,1,0]) ledPlate();
+}
 /* alphabet(); */
+/* cube([30,58.35,1]); */
