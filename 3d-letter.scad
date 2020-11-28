@@ -5,7 +5,7 @@ use <fonts/Millimetre-Bold.otf>
 
 $fn=50;
 
-printlayer=0.45; //mm
+/* printlayer=0.45; //mm */
 letterHight=60;
 thickness=13;
 font="DejaVu Sans Mono:style=Bold";
@@ -37,11 +37,14 @@ for(i = [0:AlphCnt-1]){
     3d_letter(Alphabet[i],letterHight,thickness);
 };
 }
+
+/* translate([5,thickness,socketLenZ-lowSocketHeight])
+rotate([90,0,0])
 difference() {
   3d_letter("A",letterHight,thickness);
   translate([5.2,1,-1]) ledPlate();
   translate([34.3,1,-1]) ledPlate();
-}
+} */
 
 /* difference() {
   3d_letter("H",letterHight,thickness);
@@ -57,3 +60,40 @@ difference() {
 
 /* alphabet(); */
 /* cube([30,58.35,1]); */
+
+
+socketLenX = 60;
+socketLenY = 30;
+socketLenZ = 30;
+lowSocketHeight = 7;
+lowSocketDepht = thickness + 5;
+socketWallThickness = 2;
+
+
+
+
+
+module socket()
+{
+  difference() {
+    cube([socketLenX,socketLenY,socketLenZ]);
+    translate([0,0,socketLenZ-lowSocketHeight]) cube([socketLenX,lowSocketDepht,lowSocketHeight]);
+    /* #translate([0,lowSocketDepht,socketLenZ-lowSocketHeight]) rotate([20,0,0]) cube([socketLenX,lowSocketDepht,lowSocketHeight]); */
+
+    translate([socketWallThickness,socketWallThickness,socketWallThickness])
+    cube([socketLenX-socketWallThickness*2,
+      socketLenY-socketWallThickness,
+      socketLenZ-lowSocketHeight-socketWallThickness*2]);
+
+
+  }
+
+}
+socket();
+
+cutoutPoly = [
+[0,0],
+[0,3],
+[8,3],
+[5,0]
+];
