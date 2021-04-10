@@ -38,8 +38,8 @@ for(i = [0:AlphCnt-1]){
 };
 }
 
-/* translate([5,thickness,socketLenZ-lowSocketHeight])
-rotate([90,0,0])
+/* translate([0,0,0])
+rotate([90,0,180])
 difference() {
   3d_letter("A",letterHight,thickness);
   translate([5.2,1,-1]) ledPlate();
@@ -65,31 +65,97 @@ difference() {
 socketLenX = 60;
 socketLenY = 30;
 socketLenZ = 30;
-lowSocketHeight = 7;
-lowSocketDepht = thickness + 5;
 socketWallThickness = 2;
 
+cableHoleRad=5;
+tolerance=0.2;
+extra=0.1;
 
+screwDia=3;
+screwHeadDia=6;
 
-
-
-module socket()
+module socket(cableHoleL=false, cableHoleR=false)
 {
   difference() {
-    cube([socketLenX,socketLenY,socketLenZ]);
-    translate([0,0,socketLenZ-lowSocketHeight]) cube([socketLenX,lowSocketDepht,lowSocketHeight]);
-    /* #translate([0,lowSocketDepht,socketLenZ-lowSocketHeight]) rotate([20,0,0]) cube([socketLenX,lowSocketDepht,lowSocketHeight]); */
-
-    translate([socketWallThickness,socketWallThickness,socketWallThickness])
+    cube([socketLenX,socketLenY-socketWallThickness,socketLenZ]);
+    translate([socketWallThickness,-extra,socketWallThickness])
     cube([socketLenX-socketWallThickness*2,
-      socketLenY-socketWallThickness,
-      socketLenZ-lowSocketHeight-socketWallThickness*2]);
+      socketLenY-socketWallThickness*2+extra,
+      socketLenZ-socketWallThickness*2]);
 
+    if(cableHoleL == true)
+    {
+      translate([-extra,socketLenY/3,socketLenZ/2]) rotate([-90,0,-90])
+      cylinder(r=cableHoleRad,h=socketWallThickness+extra*2);
+    }
 
+    if(cableHoleR == true)
+    {
+      translate([socketLenX-socketWallThickness-extra,socketLenY/3,socketLenZ/2]) rotate([-90,0,-90])
+      cylinder(r=cableHoleRad,h=socketWallThickness+extra*2);
+    }
   }
 
+  /* screw hole lower left corner */
+  difference() {
+    translate([socketWallThickness,socketWallThickness,socketWallThickness])
+      cube([screwDia+2,socketLenY-socketWallThickness*3,screwDia+2]);
+    translate([socketWallThickness+(screwDia+2)/2,socketWallThickness,socketWallThickness+(screwDia+2)/2])
+      rotate([90,0,180]) cylinder(r=(screwDia-tolerance)/2, h=10, center=false);
+  }
+
+  /* screw hole upper right corner */
+  difference() {
+    translate([socketLenX-socketWallThickness-(screwDia+2),
+        socketWallThickness,
+        socketLenZ-socketWallThickness-(screwDia+2)])
+      cube([screwDia+2,socketLenY-socketWallThickness*3,screwDia+2]);
+    translate([socketLenX-socketWallThickness-(screwDia+2)/2,
+        socketWallThickness,
+        socketLenZ-socketWallThickness-(screwDia+2)/2])
+      rotate([90,0,180]) cylinder(r=(screwDia-tolerance)/2, h=10, center=false);
+  }
+
+
 }
-socket();
+
+
+module lid()
+{
+  difference() {
+
+    union()
+    {
+      cube([socketLenX,socketWallThickness,socketLenZ]);
+
+      translate([socketWallThickness+tolerance,socketWallThickness,socketWallThickness+tolerance])
+      cube([socketLenX-socketWallThickness*2-tolerance*2,
+        socketWallThickness,
+        socketLenZ-socketWallThickness*2-tolerance*2]);
+    }
+
+  /* screw hole lower left corner */
+  translate([socketWallThickness+(screwDia+2)/2,
+      0,
+      socketWallThickness+(screwDia+2)/2])
+    rotate([90,0,180]) cylinder(r=screwDia/2, h=socketWallThickness*2, center=false);
+
+    /* screw hole upper right corner */
+  translate([socketLenX-socketWallThickness-(screwDia+2)/2,
+      0,
+      socketLenZ-socketWallThickness-(screwDia+2)/2])
+    rotate([90,0,180]) cylinder(r=screwDia/2, h=socketWallThickness*2, center=false);
+  translate([socketLenX-socketWallThickness-(screwDia+2)/2,
+      0,
+      socketLenZ-socketWallThickness-(screwDia+2)/2])
+    rotate([90,0,180]) cylinder(r=screwHeadDia/2, h=socketWallThickness, center=false);
+  }
+}
+
+
+lid();
+
+translate([0,socketWallThickness+5,0]) socket(cableHoleL=true,cableHoleR=true);
 
 cutoutPoly = [
 [0,0],
