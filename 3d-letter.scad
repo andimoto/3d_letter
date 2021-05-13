@@ -67,14 +67,60 @@ socketLenY = 30;
 socketLenZ = 30;
 socketWallThickness = 2;
 
-cableHoleRad=5;
-tolerance=0.2;
+cableHoleRad=3;
+tolerance=0.1;
 extra=0.1;
 
 screwDia=3;
 screwHeadDia=6;
 
-module socket(cableHoleL=false, cableHoleR=false)
+connectorRad = 5;
+conPlateMulti=1.4;
+
+lidFixRad = 0.5;
+lidFixMove = 0.2;
+
+cableHole1Xmov = 15;
+cableHole1Ymov = 5;
+cableHole2Xmov = 44.5;
+cableHole2Ymov = 5;
+topCableHoleR = 3/2;
+
+module connectorNegPlate()
+{
+  hull()
+  {
+    cylinder(r=connectorRad,h=socketWallThickness);
+    translate([-connectorRad,-connectorRad*2,0]) cube([connectorRad*2,connectorRad*2,socketWallThickness]);
+  }
+}
+
+
+module connector()
+{
+  difference()
+  {
+    union()
+    {
+      translate([0,0,socketWallThickness*2]) scale([conPlateMulti,conPlateMulti,1]) connectorNegPlate();
+      connectorNegPlate();
+      translate([0,0,socketWallThickness])connectorNegPlate();
+      translate([0,0,-socketWallThickness]) scale([conPlateMulti,conPlateMulti,1]) connectorNegPlate();
+    }
+
+    translate([0,0,-socketWallThickness]) cylinder(r=cableHoleRad,h=socketWallThickness*4);
+    translate([-cableHoleRad/2,0,-socketWallThickness]) cube([cableHoleRad,cableHoleRad*2*conPlateMulti,socketWallThickness*4]);
+
+    translate([-conPlateMulti*connectorRad,-connectorRad*2*conPlateMulti,-socketWallThickness])
+      cube([conPlateMulti*connectorRad*2,connectorRad,socketWallThickness*4]);
+
+  }
+}
+
+/* connector(); */
+/* connectorNegPlate(); */
+
+module socket(cableHoleL=false, cableHoleR=false, topCableHole=false)
 {
   difference() {
     cube([socketLenX,socketLenY-socketWallThickness,socketLenZ]);
@@ -85,81 +131,67 @@ module socket(cableHoleL=false, cableHoleR=false)
 
     if(cableHoleL == true)
     {
-      translate([-extra,socketLenY/3,socketLenZ/2]) rotate([-90,0,-90])
-      cylinder(r=cableHoleRad,h=socketWallThickness+extra*2);
+      translate([0,socketLenY/3,socketLenZ/2]) rotate([0,90,0])
+      connectorNegPlate();
     }
 
     if(cableHoleR == true)
     {
-      translate([socketLenX-socketWallThickness-extra,socketLenY/3,socketLenZ/2]) rotate([-90,0,-90])
-      cylinder(r=cableHoleRad,h=socketWallThickness+extra*2);
+      translate([socketLenX-socketWallThickness,socketLenY/3,socketLenZ/2]) rotate([0,90,0])
+      connectorNegPlate();
+    }
+
+    /* lid fixer */
+    translate([socketWallThickness,socketWallThickness/2,socketWallThickness+tolerance+lidFixMove])
+      rotate([0,90,0]) cylinder(r=lidFixRad, h=socketLenX-socketWallThickness*2);
+
+    translate([socketWallThickness,socketWallThickness/2,socketLenZ-socketWallThickness-tolerance-lidFixMove])
+      rotate([0,90,0]) cylinder(r=lidFixRad, h=socketLenX-socketWallThickness*2);
+
+
+    /* case champfer */
+    translate([0,socketLenY-socketWallThickness-sqrt(2),-socketWallThickness+2]) rotate([-45,0,0]) cube([socketLenX,2,2]);
+    translate([0,socketLenY-socketWallThickness-sqrt(2),socketLenZ-socketWallThickness+2]) rotate([-45,0,0]) cube([socketLenX,2,2]);
+
+    if(topCableHole==true)
+    {
+      /* top cable coles */
+      #translate([cableHole1Xmov,cableHole1Ymov,socketLenZ-socketWallThickness]) cylinder(r=topCableHoleR, h=socketWallThickness);
+      #translate([cableHole2Xmov,cableHole2Ymov,socketLenZ-socketWallThickness]) cylinder(r=topCableHoleR, h=socketWallThickness);
     }
   }
-
-  /* screw hole lower left corner */
-  difference() {
-    translate([socketWallThickness,socketWallThickness,socketWallThickness])
-      cube([screwDia+2,socketLenY-socketWallThickness*3,screwDia+2]);
-    translate([socketWallThickness+(screwDia+2)/2,socketWallThickness,socketWallThickness+(screwDia+2)/2])
-      rotate([90,0,180]) cylinder(r=(screwDia-tolerance)/2, h=10, center=false);
-  }
-
-  /* screw hole upper right corner */
-  difference() {
-    translate([socketLenX-socketWallThickness-(screwDia+2),
-        socketWallThickness,
-        socketLenZ-socketWallThickness-(screwDia+2)])
-      cube([screwDia+2,socketLenY-socketWallThickness*3,screwDia+2]);
-    translate([socketLenX-socketWallThickness-(screwDia+2)/2,
-        socketWallThickness,
-        socketLenZ-socketWallThickness-(screwDia+2)/2])
-      rotate([90,0,180]) cylinder(r=(screwDia-tolerance)/2, h=10, center=false);
-  }
-
 
 }
 
 
 module lid()
 {
-  difference() {
+  union()
+  {
+    cube([socketLenX,socketWallThickness,socketLenZ]);
 
-    union()
-    {
-      cube([socketLenX,socketWallThickness,socketLenZ]);
+    translate([socketWallThickness+tolerance,socketWallThickness,socketWallThickness+tolerance])
+    cube([socketLenX-socketWallThickness*2-tolerance*2,
+      socketWallThickness,
+      socketLenZ-socketWallThickness*2-tolerance*2]);
 
-      translate([socketWallThickness+tolerance,socketWallThickness,socketWallThickness+tolerance])
-      cube([socketLenX-socketWallThickness*2-tolerance*2,
-        socketWallThickness,
-        socketLenZ-socketWallThickness*2-tolerance*2]);
-    }
+    translate([socketWallThickness+tolerance,socketWallThickness*1.5,socketWallThickness+tolerance+lidFixMove])
+      rotate([0,90,0]) cylinder(r=lidFixRad, h=socketLenX-socketWallThickness*2-tolerance*2);
 
-  /* screw hole lower left corner */
-  translate([socketWallThickness+(screwDia+2)/2,
-      0,
-      socketWallThickness+(screwDia+2)/2])
-    rotate([90,0,180]) cylinder(r=screwDia/2, h=socketWallThickness*2, center=false);
-
-    /* screw hole upper right corner */
-  translate([socketLenX-socketWallThickness-(screwDia+2)/2,
-      0,
-      socketLenZ-socketWallThickness-(screwDia+2)/2])
-    rotate([90,0,180]) cylinder(r=screwDia/2, h=socketWallThickness*2, center=false);
-  translate([socketLenX-socketWallThickness-(screwDia+2)/2,
-      0,
-      socketLenZ-socketWallThickness-(screwDia+2)/2])
-    rotate([90,0,180]) cylinder(r=screwHeadDia/2, h=socketWallThickness, center=false);
+    translate([socketWallThickness+tolerance,socketWallThickness*1.5,socketLenZ-socketWallThickness-tolerance-lidFixMove])
+      rotate([0,90,0]) cylinder(r=lidFixRad, h=socketLenX-socketWallThickness*2-tolerance*2);
   }
 }
 
 
 lid();
+/* socket(cableHoleL=true,cableHoleR=true); */
 
-translate([0,socketWallThickness+5,0]) socket(cableHoleL=true,cableHoleR=true);
-
-cutoutPoly = [
-[0,0],
-[0,3],
-[8,3],
-[5,0]
-];
+/* translate([(socketLenX-42.5)/2,0,socketLenZ])
+translate([45.83333333333333,(socketLenY-thickness)/2,0])
+rotate([90,0,180])
+difference() {
+  3d_letter("A",letterHight,thickness);
+  translate([5.2,1,-1]) ledPlate();
+  translate([34.3,1,-1]) ledPlate();
+} */
