@@ -111,13 +111,13 @@ module connector()
     translate([0,0,-socketWallThickness]) cylinder(r=cableHoleRad,h=socketWallThickness*4);
     translate([-cableHoleRad/2,0,-socketWallThickness]) cube([cableHoleRad,cableHoleRad*2*conPlateMulti,socketWallThickness*4]);
 
-    translate([-conPlateMulti*connectorRad,-connectorRad*2*conPlateMulti,-socketWallThickness])
-      cube([conPlateMulti*connectorRad*2,connectorRad,socketWallThickness*4]);
+    translate([conPlateMulti*connectorRad,socketWallThickness-connectorRad*2,-socketWallThickness])
+      rotate([0,0,180]) cube([conPlateMulti*connectorRad*2,connectorRad*conPlateMulti,socketWallThickness*4]);
 
   }
 }
 
-/* connector(); */
+
 /* connectorNegPlate(); */
 
 module socket(cableHoleL=false, cableHoleR=false, topCableHole=false)
@@ -184,8 +184,11 @@ module lid()
 }
 
 
-lid();
+/* lid(); */
 /* socket(cableHoleL=true,cableHoleR=true); */
+
+connector();
+
 
 /* translate([(socketLenX-42.5)/2,0,socketLenZ])
 translate([45.83333333333333,(socketLenY-thickness)/2,0])
