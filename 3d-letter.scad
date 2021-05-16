@@ -70,6 +70,7 @@ socketWallThickness = 2;
 cableHoleRad=3;
 tolerance=0.1;
 extra=0.1;
+extraLayer=0.2;
 
 screwDia=3;
 screwHeadDia=6;
@@ -102,17 +103,17 @@ module connector()
   {
     union()
     {
-      translate([0,0,socketWallThickness*2]) scale([conPlateMulti,conPlateMulti,1]) connectorNegPlate();
+      translate([0,0,socketWallThickness*2+extraLayer]) scale([conPlateMulti,conPlateMulti,1]) connectorNegPlate();
+      translate([0,0,socketWallThickness]) resize([0,0,socketWallThickness+extraLayer]) connectorNegPlate();
       connectorNegPlate();
-      translate([0,0,socketWallThickness])connectorNegPlate();
       translate([0,0,-socketWallThickness]) scale([conPlateMulti,conPlateMulti,1]) connectorNegPlate();
     }
 
-    translate([0,0,-socketWallThickness]) cylinder(r=cableHoleRad,h=socketWallThickness*4);
-    translate([-cableHoleRad/2,0,-socketWallThickness]) cube([cableHoleRad,cableHoleRad*2*conPlateMulti,socketWallThickness*4]);
+    translate([0,0,-socketWallThickness]) cylinder(r=cableHoleRad,h=socketWallThickness*4+extraLayer);
+    translate([-cableHoleRad/2,0,-socketWallThickness]) cube([cableHoleRad,cableHoleRad*2*conPlateMulti,socketWallThickness*4+extraLayer]);
 
     translate([conPlateMulti*connectorRad,socketWallThickness-connectorRad*2,-socketWallThickness])
-      rotate([0,0,180]) cube([conPlateMulti*connectorRad*2,connectorRad*conPlateMulti,socketWallThickness*4]);
+      rotate([0,0,180]) cube([conPlateMulti*connectorRad*2,connectorRad*conPlateMulti,socketWallThickness*4+extraLayer]);
 
   }
 }
