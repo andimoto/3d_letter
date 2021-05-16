@@ -62,7 +62,7 @@ difference() {
 /* cube([30,58.35,1]); */
 
 
-socketLenX = 60;
+socketLenX = 45;
 socketLenY = 30;
 socketLenZ = 30;
 socketWallThickness = 2;
@@ -118,8 +118,22 @@ module connector()
   }
 }
 
-
 /* connectorNegPlate(); */
+
+
+module diffLetter(letter)
+{
+  translate([(socketLenX-42.5)/2,0,socketLenZ-0.4])
+  translate([45.83333333333333,(socketLenY-thickness)/2,0])
+  rotate([90,0,180])
+  difference() {
+    3d_letter(letter,letterHight,thickness);
+    translate([5.2,1,-1]) ledPlate();
+    translate([34.3,1,-1]) ledPlate();
+  }
+}
+/* diffLetter("A"); */
+
 
 module socket(cableHoleL=false, cableHoleR=false, topCableHole=false)
 {
@@ -160,6 +174,8 @@ module socket(cableHoleL=false, cableHoleR=false, topCableHole=false)
       #translate([cableHole1Xmov,cableHole1Ymov,socketLenZ-socketWallThickness]) cylinder(r=topCableHoleR, h=socketWallThickness);
       #translate([cableHole2Xmov,cableHole2Ymov,socketLenZ-socketWallThickness]) cylinder(r=topCableHoleR, h=socketWallThickness);
     }
+
+    diffLetter("A");
   }
 
 }
@@ -186,16 +202,6 @@ module lid()
 
 
 /* lid(); */
-/* socket(cableHoleL=true,cableHoleR=true); */
+socket(cableHoleL=true,cableHoleR=true);
 
-connector();
-
-
-/* translate([(socketLenX-42.5)/2,0,socketLenZ])
-translate([45.83333333333333,(socketLenY-thickness)/2,0])
-rotate([90,0,180])
-difference() {
-  3d_letter("A",letterHight,thickness);
-  translate([5.2,1,-1]) ledPlate();
-  translate([34.3,1,-1]) ledPlate();
-} */
+/* connector(); */
