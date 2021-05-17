@@ -87,6 +87,11 @@ cableHole2Xmov = 44.5;
 cableHole2Ymov = 5;
 topCableHoleR = 3/2;
 
+letterXmove = 0.2;
+letterYmove = -2;
+letterZmove = 0.8;
+
+
 module connectorNegPlate()
 {
   hull()
@@ -123,8 +128,8 @@ module connector()
 
 module diffLetter(letter)
 {
-  translate([(socketLenX-42.5)/2,0,socketLenZ-0.4])
-  translate([45.83333333333333,(socketLenY-thickness)/2,0])
+  translate([((socketLenX-42.5)/2)+letterXmove,letterYmove,socketLenZ-letterZmove])
+  translate([46,(socketLenY-thickness)/2,0])
   rotate([90,0,180])
   difference() {
     3d_letter(letter,letterHight,thickness);
@@ -155,6 +160,11 @@ module socket(cableHoleL=false, cableHoleR=false, topCableHole=false)
       translate([socketLenX-socketWallThickness,socketLenY/3,socketLenZ/2]) rotate([0,90,0])
       connectorNegPlate();
     }
+
+    translate([0,socketLenY-socketWallThickness*4,socketLenZ/2]) rotate([0,90,0])
+      cylinder(r=screwDia/2,h=socketWallThickness);
+    translate([socketLenX-socketWallThickness,socketLenY-socketWallThickness*4,socketLenZ/2]) rotate([0,90,0])
+      cylinder(r=screwDia/2,h=socketWallThickness);
 
     /* lid fixer */
     translate([socketWallThickness,socketWallThickness/2,socketWallThickness+tolerance+lidFixMove])
@@ -201,7 +211,7 @@ module lid()
 }
 
 
-/* lid(); */
-socket(cableHoleL=true,cableHoleR=true);
+lid();
+/* socket(cableHoleL=true,cableHoleR=true); */
 
 /* connector(); */
