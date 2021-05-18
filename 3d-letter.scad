@@ -62,7 +62,8 @@ difference() {
 /* cube([30,58.35,1]); */
 
 
-socketLenX = 45;
+socketLenX = 60;
+/* socketLenX = 45; */
 socketLenY = 40;
 socketLenZ = 30;
 socketWallThickness = 2;
@@ -87,17 +88,24 @@ cableHole2Xmov = 44.5;
 cableHole2Ymov = 5;
 topCableHoleR = 3/2;
 
-cableSlot1Xmove = 7;
+cableSlot1Xmove = 7+16;
 cableSlot1Ymove = 0;
-cableSlot2Xmove = 36;
+cableSlot2Xmove = 36+16;
 cableSlot2Ymove = 0;
 slotSize = 5;
 
 
-letterXmove = 0.2;
+letterXmove = 8;
+/* letterXmove = 0.2; */
 letterYmove = -2;
 letterZmove = 0.8;
 
+microUSBx = 9;
+microUSBz = 4;
+pcbThickness = 2.5; //with soldered pins
+pcbWidth = 22.5;
+moveUsbY = (pcbWidth-microUSBx)/2;
+absUsbYmove = socketLenY-microUSBx-socketWallThickness;
 
 module connectorNegPlate()
 {
@@ -147,7 +155,7 @@ module diffLetter(letter)
 /* diffLetter("A"); */
 
 
-module socket(cableHoleL=false, cableHoleR=false, topCableHole=false)
+module socket(cableHoleL=false, cableHoleR=false, topCableHole1=false, topCableHole2=false, usbCutout=false)
 {
   difference() {
     cube([socketLenX,socketLenY-socketWallThickness,socketLenZ]);
@@ -160,25 +168,20 @@ module socket(cableHoleL=false, cableHoleR=false, topCableHole=false)
     {
       translate([0,connectorRad*2,socketLenZ/2]) rotate([0,90,0])
       connectorNegPlate();
+
+      translate([0,socketLenY-socketWallThickness*5,socketLenZ/2]) rotate([0,90,0])
+        cylinder(r=screwDia/2,h=socketWallThickness);
     }
 
     if(cableHoleR == true)
     {
       translate([socketLenX-socketWallThickness,connectorRad*2,socketLenZ/2]) rotate([0,90,0])
       connectorNegPlate();
+
+      translate([socketLenX-socketWallThickness,socketLenY-socketWallThickness*5,socketLenZ/2]) rotate([0,90,0])
+        cylinder(r=screwDia/2,h=socketWallThickness);
+
     }
-
-    translate([cableSlot1Xmove,cableSlot1Ymove,socketLenZ-socketWallThickness])
-      cube([2,socketWallThickness+slotSize,socketWallThickness]);
-
-    translate([cableSlot2Xmove,cableSlot2Ymove,socketLenZ-socketWallThickness])
-      cube([2,socketWallThickness+slotSize,socketWallThickness]);
-
-
-    translate([0,socketLenY-socketWallThickness*5,socketLenZ/2]) rotate([0,90,0])
-      cylinder(r=screwDia/2,h=socketWallThickness);
-    translate([socketLenX-socketWallThickness,socketLenY-socketWallThickness*5,socketLenZ/2]) rotate([0,90,0])
-      cylinder(r=screwDia/2,h=socketWallThickness);
 
     /* lid fixer */
     translate([socketWallThickness,socketWallThickness/2,socketWallThickness+tolerance+lidFixMove])
@@ -192,11 +195,24 @@ module socket(cableHoleL=false, cableHoleR=false, topCableHole=false)
     translate([0,socketLenY-socketWallThickness-sqrt(2)+0.5,-socketWallThickness+2-0.5]) rotate([-45,0,0]) cube([socketLenX,2,2]);
     translate([0,socketLenY-socketWallThickness-sqrt(2)+0.5,socketLenZ-socketWallThickness+2+0.5]) rotate([-45,0,0]) cube([socketLenX,2,2]);
 
-    if(topCableHole==true)
+    if(topCableHole1==true)
     {
-      /* top cable coles */
-      translate([cableHole1Xmov,cableHole1Ymov,socketLenZ-socketWallThickness]) cylinder(r=topCableHoleR, h=socketWallThickness);
-      translate([cableHole2Xmov,cableHole2Ymov,socketLenZ-socketWallThickness]) cylinder(r=topCableHoleR, h=socketWallThickness);
+      translate([cableSlot1Xmove,cableSlot1Ymove,socketLenZ-socketWallThickness])
+        cube([2,socketWallThickness+slotSize,socketWallThickness]);
+    }
+    if(topCableHole2==true)
+    {
+      translate([cableSlot2Xmove,cableSlot2Ymove,socketLenZ-socketWallThickness])
+        cube([2,socketWallThickness+slotSize,socketWallThickness]);
+    }
+
+    if(usbCutout == true)
+    {
+      translate([0,-moveUsbY,pcbThickness])
+      union(){
+        translate([socketWallThickness,absUsbYmove,socketWallThickness])
+        rotate([0,0,90]) cube([microUSBx,socketWallThickness,microUSBz]);
+      }
     }
 
     diffLetter("A");
@@ -225,7 +241,8 @@ module lid()
 }
 
 
-/* lid(); */
-socket(cableHoleL=true,cableHoleR=true);
+lid();
+/* socket(cableHoleL=true,cableHoleR=true, topCableHole1=true, topCableHole2=true); */
+/* socket(cableHoleL=false,cableHoleR=true, topCableHole1=true, topCableHole2=true, usbCutout=true); */
 
 /* connector(); */
