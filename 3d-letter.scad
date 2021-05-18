@@ -210,7 +210,7 @@ module socket(cableHoleL=false, cableHoleR=false, topCableHole1=false, topCableH
     {
       translate([0,-moveUsbY,pcbThickness])
       union(){
-        translate([socketWallThickness,absUsbYmove,socketWallThickness])
+        translate([socketWallThickness,absUsbYmove-socketWallThickness,socketWallThickness])
         rotate([0,0,90]) cube([microUSBx,socketWallThickness,microUSBz]);
       }
     }
@@ -241,8 +241,8 @@ module lid()
 }
 
 
-lid();
+/* lid(); */
 /* socket(cableHoleL=true,cableHoleR=true, topCableHole1=true, topCableHole2=true); */
-/* socket(cableHoleL=false,cableHoleR=true, topCableHole1=true, topCableHole2=true, usbCutout=true); */
+socket(cableHoleL=false,cableHoleR=true, topCableHole1=true, topCableHole2=true, usbCutout=true);
 
 /* connector(); */
