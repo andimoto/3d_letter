@@ -87,6 +87,13 @@ cableHole2Xmov = 44.5;
 cableHole2Ymov = 5;
 topCableHoleR = 3/2;
 
+cableSlot1Xmove = 7;
+cableSlot1Ymove = 0;
+cableSlot2Xmove = 36;
+cableSlot2Ymove = 0;
+slotSize = 5;
+
+
 letterXmove = 0.2;
 letterYmove = -2;
 letterZmove = 0.8;
@@ -160,6 +167,13 @@ module socket(cableHoleL=false, cableHoleR=false, topCableHole=false)
       translate([socketLenX-socketWallThickness,connectorRad*2,socketLenZ/2]) rotate([0,90,0])
       connectorNegPlate();
     }
+
+    translate([cableSlot1Xmove,cableSlot1Ymove,socketLenZ-socketWallThickness])
+      cube([2,socketWallThickness+slotSize,socketWallThickness]);
+
+    translate([cableSlot2Xmove,cableSlot2Ymove,socketLenZ-socketWallThickness])
+      cube([2,socketWallThickness+slotSize,socketWallThickness]);
+
 
     translate([0,socketLenY-socketWallThickness*5,socketLenZ/2]) rotate([0,90,0])
       cylinder(r=screwDia/2,h=socketWallThickness);
